@@ -2,7 +2,9 @@ package com.jebolwski.learning;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
+
 
 @Entity
 public class Customer {
@@ -12,14 +14,49 @@ public class Customer {
             name = "customer_id_sequence",
             sequenceName = "customer_id_sequence"
     )
+
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "customer_id_sequence"
     )
+    @Column(name = "id")
     private Integer id;
     private String name;
     private String email;
     private Integer age;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id",referencedColumnName = "id")
+    private List<Product> products;
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(email, customer.email) && Objects.equals(age, customer.age) && Objects.equals(products, customer.products);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, age, products);
+    }
+
+
+    public Customer(Integer id, String name, String email, Integer age, List<Product> products) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.products = products;
+    }
 
     public Customer(Integer id, String name, String email, Integer age) {
         this.setId(id);
@@ -38,19 +75,6 @@ public class Customer {
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(email, customer.email) && Objects.equals(age, customer.age);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, email, age);
     }
 
     public Integer getId() {

@@ -12,10 +12,13 @@ import java.util.Optional;
 @RequestMapping("api/customers")
 public class LearningApplication {
 	private final CustomerRepository customerRepository;
+	private final ProductRepository productRepository;
 
-	public LearningApplication(CustomerRepository customerRepository) {
+	public LearningApplication(CustomerRepository customerRepository, ProductRepository productRepository) {
 		this.customerRepository = customerRepository;
+		this.productRepository = productRepository;
 	}
+
 
 
 	public static void main(String[] args) {
@@ -39,22 +42,35 @@ public class LearningApplication {
 		return customerRepository.findAll();
 	}
 
-	record AddCustomerView(String name,String email,Integer age){}
+	record AddCustomerView(String name,String email,Integer age,List<Product> products){}
 
 	@PostMapping("/add")
 	public boolean addCustomer(@RequestBody AddCustomerView customerview){
+		System.out.println(customerview);
+		List<Product> products =  customerview.products();
+		System.out.println(products);
+		for (Product product:products) {
+			productRepository.save(product);
+		}
 		Customer customer = new Customer();
 		customer.setAge(customerview.age());
 		customer.setName(customerview.name());
 		customer.setEmail(customerview.email());
+		customer.setProducts(customerview.products());
 		var result = customerRepository.save(customer);
 		return true;
 	}
 
 	@DeleteMapping("/{customerId}/delete")
 	public boolean deleteCustomer(@PathVariable("customerId") Integer id){
+
 		Optional<Customer> customer = customerRepository.findById(id);
+
 		if (customer.isPresent()){
+			for (Product product:customer.get().getProducts()
+			 ) {
+				productRepository.delete(product);
+			}
 			customerRepository.deleteById(id);
 			return true;
 		}else{

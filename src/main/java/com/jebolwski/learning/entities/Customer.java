@@ -1,4 +1,4 @@
-package com.jebolwski.learning;
+package com.jebolwski.learning.entities;
 
 import jakarta.persistence.*;
 

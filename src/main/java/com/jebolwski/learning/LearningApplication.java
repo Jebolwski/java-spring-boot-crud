@@ -1,5 +1,9 @@
 package com.jebolwski.learning;
 
+import com.jebolwski.learning.entities.Customer;
+import com.jebolwski.learning.entities.Product;
+import com.jebolwski.learning.repositories.CustomerRepository;
+import com.jebolwski.learning.repositories.ProductRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
